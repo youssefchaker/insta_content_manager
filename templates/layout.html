@@ -54,6 +54,13 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4">
         <div class="container">
             <a class="navbar-brand" href="/">IG Scheduler</a>
+            <div class="navbar-nav">
+                {% if session['username'] %}
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                {% else %}
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                {% endif %}
+            </div>
         </div>
     </nav>
     <div class="container" style="max-width: 935px;">

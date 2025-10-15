@@ -7,9 +7,9 @@ from instagrapi import Client
 logger = logging.getLogger("uploader")
 
 class IGPoster:
-    def __init__(self, username=None, password=None, session_file="ig_session.json"):
-        self.username = username or os.getenv("INSTAGRAM_USERNAME")
-        self.password = password or os.getenv("INSTAGRAM_PASSWORD")
+    def __init__(self, username, password, session_file="ig_session.json"):
+        self.username = username
+        self.password = password
         self.client = None
         self.session_file = session_file
         self.mock = (self.username is None or self.password is None)

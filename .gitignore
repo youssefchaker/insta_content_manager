@@ -3,3 +3,5 @@
 /__pycache__
 scheduler.db
 /static
+credentials.json
+ig_session.json

@@ -34,6 +34,11 @@
                     class="badge rounded-pill text-bg-{{ 'success' if it.status.value == 'uploaded' else ('secondary' if it.status.value == 'scheduled' else ('primary' if it.status.value == 'processing' else 'danger')) }}">{{
                     it.status.value }}</span>
             </p>
+            {% if it.caption %}
+            <p class="mb-1 fst-italic text-muted">
+                {{ it.caption }}
+            </p>
+            {% endif %}
         </div>
 
         <!-- Delete Button -->

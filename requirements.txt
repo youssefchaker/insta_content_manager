@@ -1,9 +1,12 @@
 flask
-instagrapi
+flask_apscheduler
+sqlalchemy
 python-dotenv
-apscheduler
 werkzeug
+flask_wtf
+wtforms
+instagrapi
+apscheduler
 requests
 moviepy
 flask_apscheduler
-sqlalchemy
