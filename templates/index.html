@@ -1,0 +1,76 @@
+<!-- templates/index.html -->
+{% extends "layout.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4" style="border-radius: 8px;">
+            <div class="card-header bg-white" style="border-radius: 8px 8px 0 0;">Schedule Content</div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">Media File</label>
+                        <input class="form-control" type="file" name="media" required>
+                        <small class="text-muted">Max 60s for video. JPG, PNG, MP4, MOV supported.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" name="post_type" id="postTypeSelect">
+                            <option value="post">Post (to feed)</option>
+                            <option value="story">Story</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Publish Time</label>
+                        <input class="form-control" type="datetime-local" name="scheduled_time" required>
+                    </div>
+
+                    <div class="mb-3" id="captionField">
+                        <label class="form-label">Caption (for Posts)</label>
+                        <textarea class="form-control" name="caption" rows="2"></textarea>
+                    </div>
+
+                    <button class="btn btn-primary" type="submit">Schedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h5>Queue & History</h5>
+        <!-- This div will be updated automatically -->
+        <div id="queue-container">
+            {% include "_queue.html" %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // --- Real-time queue update ---
+        const queueContainer = document.getElementById('queue-container');
+        setInterval(function () {
+            fetch("{{ url_for('queue_partial') }}")
+                .then(response => response.text())
+                .then(html => {
+                    queueContainer.innerHTML = html;
+                });
+        }, 5000); // Poll every 5 seconds
+
+        // --- Caption field toggle ---
+        const postTypeSelect = document.getElementById('postTypeSelect');
+        const captionField = document.getElementById('captionField');
+
+        function toggleCaptionField() {
+            if (postTypeSelect.value === 'story') {
+                captionField.style.display = 'none';
+            } else {
+                captionField.style.display = 'block';
+            }
+        }
+        postTypeSelect.addEventListener('change', toggleCaptionField);
+        toggleCaptionField(); // Run on page load
+    });
+</script>
+{% endblock %}

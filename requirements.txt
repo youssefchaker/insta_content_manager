@@ -1,0 +1,9 @@
+flask
+instagrapi
+python-dotenv
+apscheduler
+werkzeug
+requests
+moviepy
+flask_apscheduler
+sqlalchemy
