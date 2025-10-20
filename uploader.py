@@ -1,4 +1,3 @@
-# uploader.py
 import os
 import logging
 from pathlib import Path
@@ -24,7 +23,6 @@ class IGPoster:
         try:
             logger.info("Logging in to Instagram as %s", self.username)
             self.client.login(self.username, self.password)
-            # save session to avoid re-login (optional)
             try:
                 self.client.dump_settings(self.session_file)
             except Exception:
@@ -58,7 +56,6 @@ class IGPoster:
                 return True, f"Uploaded as post: {media.pk}"
             elif post_type == "story":
                 if file_path.lower().endswith(('.jpg','.jpeg','.png')):
-                    # Captions are not supported directly for story uploads via API
                     media = self.client.photo_upload_to_story(file_path)
                 else:
                     media = self.client.video_upload_to_story(file_path)

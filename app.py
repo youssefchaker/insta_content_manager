@@ -24,13 +24,11 @@ UPLOAD_FOLDER = Path("static/uploads")
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 ALLOWED_IMAGE = {".png", ".jpg", ".jpeg"}
 ALLOWED_VIDEO = {".mp4", ".mov", ".mkv", ".avi"}
-MAX_DURATION_STORY = 60  # seconds
-MAX_DURATION_POST = 60   # seconds
+MAX_DURATION_STORY = 60
+MAX_DURATION_POST = 60
 
-# Initialize DB
 init_db()
 
-# Flask + scheduler
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = str(UPLOAD_FOLDER)
 app.config["SCHEDULER_API_ENABLED"] = True
@@ -42,7 +40,6 @@ scheduler.start()
 # IG poster instance (login done on demand)
 app.register_blueprint(auth_bp)
 
-# --- Template Filters ---
 @app.template_filter('to_local_time')
 def to_local_time_filter(utc_dt):
     """Converts a naive UTC datetime to a local datetime string."""
@@ -96,7 +93,7 @@ def index():
             # attach the system's local timezone, then convert to UTC for storage.
             local_dt = datetime.fromisoformat(scheduled_str)
             utc_dt = local_dt.astimezone(timezone.utc)
-            scheduled_time = utc_dt.replace(tzinfo=None) # Store as naive UTC
+            scheduled_time = utc_dt.replace(tzinfo=None)
         except Exception:
             flash("Invalid scheduled time", "danger")
             return redirect(url_for("index"))
@@ -112,12 +109,10 @@ def index():
             flash("Unsupported file type", "danger")
             return redirect(url_for("index"))
 
-        # Save file with unique name
         unique_name = f"{uuid.uuid4().hex}{ext}"
         save_path = UPLOAD_FOLDER / unique_name
         file.save(save_path)
 
-        # If video, check duration limits
         if media_type == "video":
             duration = get_video_duration(save_path)
             limit = MAX_DURATION_STORY if post_type == "story" else MAX_DURATION_POST
@@ -146,7 +141,6 @@ def index():
         logger.info("Scheduled new item id=%s file=%s at %s", item.id, item.filename, scheduled_time)
         return redirect(url_for("index"))
 
-    # GET: show queue
     items = session_db.execute(select(ScheduledItem).order_by(ScheduledItem.scheduled_time)).scalars().all()
     return render_template("index.html", items=items, now=datetime.utcnow())
 
@@ -168,11 +162,9 @@ def delete_item(item_id):
     item = session_db.get(ScheduledItem, item_id)
     if item:
         try:
-            # Delete file from disk
             file_path = Path(item.filename)
             file_path.unlink(missing_ok=True)
 
-            # Delete record from DB
             session_db.delete(item)
             session_db.commit()
             flash(f"Deleted item {item_id} successfully.", "success")
@@ -188,11 +180,9 @@ def delete_item(item_id):
 def clear_all_data():
     session_db = SessionLocal()
     try:
-        # Delete all files in upload folder
         for f in UPLOAD_FOLDER.glob("*"):
             if f.is_file():
                 f.unlink()
-        # Delete all records from DB
         session_db.query(ScheduledItem).delete()
         session_db.commit()
         logger.info("Cleared all scheduled items and media files.")
@@ -242,7 +232,7 @@ def check_and_upload():
             ).scalar_one_or_none()
 
             if not item_to_process:
-                return # No items are due
+                return
 
             # Lock the item by changing its status
             item_to_process.status = StatusEnum.processing
@@ -252,7 +242,6 @@ def check_and_upload():
             post_type = item_to_process.post_type
             caption = item_to_process.caption
 
-        # Now, perform the upload outside the initial lock-grabbing session
         logger.info("Processing item id=%s file=%s", item_id, filename)
         with SessionLocal() as session_db:
             try:
@@ -273,5 +262,4 @@ def check_and_upload():
             logger.info("Finished processing item id=%s with status %s", item_id, item.status.value)
 
 if __name__ == "__main__":
-    # Run Flask dev server (use production server for real deployments)
     app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)

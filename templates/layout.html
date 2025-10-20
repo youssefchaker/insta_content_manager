@@ -1,4 +1,3 @@
-<!-- templates/layout.html -->
 <!doctype html>
 <html lang="en" data-bs-theme="light">
 
@@ -13,7 +12,6 @@
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #fafafa;
-            /* Instagram's light grey background */
         }
 
         .navbar {
@@ -56,9 +54,9 @@
             <a class="navbar-brand" href="/">IG Scheduler</a>
             <div class="navbar-nav">
                 {% if session['username'] %}
-                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
                 {% else %}
-                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
                 {% endif %}
             </div>
         </div>
@@ -74,7 +72,6 @@
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Confirmation Modal -->
     <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -84,7 +81,6 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="confirmationModalBody">
-                    <!-- Message will be injected here -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

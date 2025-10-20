@@ -29,10 +29,6 @@ def login():
         ig_poster = IGPoster(username, password)
         if ig_poster.login():
             session['username'] = username
-            # Do not store password in session for security reasons
-            # session['password'] = password
-
-            # Store credentials for the background worker
             with open("credentials.json", "w") as f:
                 json.dump({"username": username, "password": password}, f)
 
@@ -44,7 +40,6 @@ def login():
 
 @auth_bp.route('/logout')
 def logout():
-    # Clear credentials file
     if os.path.exists("credentials.json"):
         os.remove("credentials.json")
 
